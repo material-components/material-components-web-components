@@ -4,6 +4,7 @@ extends:
   - plugin:@typescript-eslint/eslint-recommended
   - plugin:@typescript-eslint/recommended
   - plugin:wc/recommended
+  - plugin:lit/all
 globals:
   goog: false
 env:
@@ -13,6 +14,7 @@ plugins:
   - "@typescript-eslint"
   - mocha
   - wc
+  - lit
 parserOptions:
   ecmaVersion: 2017
   sourceType: module
