@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import {HTMLElementWithRipple} from '@material/mwc-base/form-element';
+import {HTMLElementWithRipple } from '@material/mwc-base/form-element';
 import {ripple} from '@material/mwc-ripple/ripple-directive.js';
 import {html, LitElement, property, query} from 'lit-element';
 import {classMap} from 'lit-html/directives/class-map';
@@ -31,6 +31,8 @@ export class ButtonBase extends LitElement {
   @property({type: Boolean, reflect: true}) disabled = false;
 
   @property({type: Boolean}) trailingIcon = false;
+
+  @property({type: String}) type = 'submit';
 
   @property() icon = '';
 
@@ -78,6 +80,7 @@ export class ButtonBase extends LitElement {
     const buttonRipple = ripple({unbounded: false});
     return html`
       <button id="button"
+              type="${this.type}"
               .ripple="${buttonRipple}"
               class="mdc-button ${classMap(classes)}"
               ?disabled="${this.disabled}"
