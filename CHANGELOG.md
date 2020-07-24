@@ -23,6 +23,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 - `button`
   - ripple will unripple when mouse/touchend happens outside of button
+- `icon-button-toggle`
+  - svg icons are now centered properly when resized with `--mdc-icon-size`
 
 ## [v0.17.2] - 2020-01-01
 

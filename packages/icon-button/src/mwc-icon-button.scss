@@ -16,23 +16,13 @@ limitations under the License.
 */
 
 @use '@material/icon-button' as iconbutton;
-@use '@material/mwc-icon/src/_mwc-icon';
-@use '@material/theme';
-@use '@material/feature-targeting' as feature;
 @use '@material/ripple';
+@use '@material/theme';
+@use '@material/theme/custom-properties';
+@use '@material/mwc-icon/src/mwc-icon';
 
 @include iconbutton.core-styles();
 @include ripple.common();
-
-@mixin mdc-icon-button-size-var-aware($size, $query: feature.all()) {
-  $feat-structure: feature.create-target($query, structure);
-
-  @include feature.targets($feat-structure) {
-    width: $size;
-    height: $size;
-    padding: calc((#{$size} - var(--mdc-icon-size, #{iconbutton.$icon-size})) / 2);
-  }
-}
 
 :host {
   display: inline-block;
@@ -69,37 +59,26 @@ limitations under the License.
 }
 
 .mdc-icon-button {
-  @include mdc-icon-button-size-var-aware(var(--mdc-icon-button-size, #{iconbutton.$size}));
+  $icon-size: var(--mdc-icon-size, #{iconbutton.$icon-size});
 
-  > i {
-    position: absolute;
-    top: 0;
-    padding-top: inherit;
-  }
-
-  i,
-  svg,
-  img,
-  ::slotted(*) {
-    display: block;
-    $feat-structure: feature.create-target(feature.all(), structure);
-    @include feature.targets($feat-structure) {
-      width: var(--mdc-icon-size, #{iconbutton.$icon-size});
-      height: var(--mdc-icon-size, #{iconbutton.$icon-size});
-    }
+  ::slotted(svg),
+  ::slotted(img) {
+    width: $icon-size;
+    height: $icon-size;
   }
 }
 
 // hack for top-app-bar ripple coloring of icon-buttons
 .mdc-ripple-upgraded {
-  &:focus::before, &:focus::after {
-    @include theme.prop(background-color, (
-      varname: --mdc-theme-on-primary,
-      fallback: currentColor,
-    ));
-    @include theme.prop(opacity, (
-      varname: --mdc-icon-button-ripple-opacity,
-      fallback: 0.12,
-    ));
+  &:focus::before,
+  &:focus::after {
+    @include theme.property(
+      background-color,
+      custom-properties.create(--mdc-theme-on-primary, currentColor)
+    );
+    @include theme.property(
+      opacity,
+      custom-properties.create(--mdc-icon-button-ripple-opacity, 0.12)
+    );
   }
 }
