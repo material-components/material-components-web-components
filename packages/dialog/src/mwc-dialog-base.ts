@@ -68,13 +68,13 @@ export class DialogBase extends BaseElement {
   @observer(function(this: DialogBase, newAction: string) {
     this.mdcFoundation.setScrimClickAction(newAction);
   })
-  scrimClickAction = 'close';
+  scrimClickAction = 'cancel';
 
   @property({type: String})
   @observer(function(this: DialogBase, newAction: string) {
     this.mdcFoundation.setEscapeKeyAction(newAction);
   })
-  escapeKeyAction = 'close';
+  escapeKeyAction = 'cancel';
 
   @property({type: Boolean, reflect: true})
   @observer(function(this: DialogBase, isOpen: boolean) {
@@ -218,6 +218,11 @@ export class DialogBase extends BaseElement {
           this.open = false;
         }
         this.emitNotification('closing', action);
+        if (action === 'cancel') {
+          this.emitNotification(action, action);
+        } else {
+          this.emitNotification('close', action);
+        }
       },
       notifyOpened: () => this.emitNotification('opened'),
       notifyOpening: () => {

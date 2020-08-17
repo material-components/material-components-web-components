@@ -24,6 +24,11 @@ for (let i = 0; i < buttons.length; i++) {
   const listener = listenerFactory(buttonNum);
 
   button.addEventListener('click', listener);
+  const dialog = document.body.querySelector('#dialog' + buttonNum);
+  dialog.addEventListener('closing', () => console.log('Closing: ', event.detail));
+  dialog.addEventListener('closed', () => console.log('Closed: ', event.detail));
+  dialog.addEventListener('close', () => console.log('Close: ', event.detail));
+  dialog.addEventListener('cancel', () => console.log('Cancel: ', event.detail));
 }
 
 window.toggleActions.onclick = function() {
