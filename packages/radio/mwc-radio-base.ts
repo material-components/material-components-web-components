@@ -16,7 +16,6 @@ limitations under the License.
 */
 import {addHasRemoveClass, FormElement} from '@material/mwc-base/form-element';
 import {observer} from '@material/mwc-base/observer';
-import {SingleSelectionController} from '@material/mwc-radio/single-selection-controller';
 import {Ripple} from '@material/mwc-ripple/mwc-ripple';
 import {RippleHandlers} from '@material/mwc-ripple/ripple-handlers';
 import {MDCRadioAdapter} from '@material/radio/adapter';
@@ -26,7 +25,6 @@ import {classMap} from 'lit-html/directives/class-map';
 
 
 /**
- * @fires checked
  * @soyCompatible
  */
 export class RadioBase extends FormElement {
@@ -36,10 +34,14 @@ export class RadioBase extends FormElement {
 
   private _checked = false;
 
-  @property({type: Boolean}) global = false;
-
   @property({type: Boolean, reflect: true})
   get checked() {
+    // If 'updated' read checked status from `<input>` which gets updated when
+    // other radio button in the group is checked.
+    if (this.formElement) {
+      return this.formElement.checked;
+    }
+
     return this._checked;
   }
 
@@ -64,21 +66,15 @@ export class RadioBase extends FormElement {
    */
   set checked(isChecked: boolean) {
     const oldValue = this._checked;
-    if (!!isChecked === !!oldValue) {
+    if (isChecked === oldValue) {
       return;
     }
     this._checked = isChecked;
     if (this.formElement) {
       this.formElement.checked = isChecked;
     }
-    if (this._selectionController !== undefined) {
-      this._selectionController.update(this);
-    }
     this.requestUpdate('checked', oldValue);
-
-    // useful when unchecks self and wrapping element needs to synchronize
-    // TODO(b/168543810): Remove triggering event on programmatic API call.
-    this.dispatchEvent(new Event('checked', {bubbles: true, composed: true}));
+    this.handleProgrammaticCheck();
   }
 
   @property({type: Boolean})
@@ -113,8 +109,6 @@ export class RadioBase extends FormElement {
 
   protected mdcFoundation!: MDCRadioFoundation;
 
-  private _selectionController?: SingleSelectionController;
-
   @internalProperty() protected shouldRenderRipple = false;
 
   @queryAsync('mwc-ripple') ripple!: Promise<Ripple|null>;
@@ -142,35 +136,6 @@ export class RadioBase extends FormElement {
     return this.rippleElement?.isActive || false;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-    // Note that we must defer creating the selection controller until the
-    // element has connected, because selection controllers are keyed by the
-    // radio's shadow root. For example, if we're stamping in a lit-html map
-    // or repeat, then we'll be constructed before we're added to a root node.
-    //
-    // Also note if we aren't using native shadow DOM, then we don't technically
-    // need a SelectionController, because our inputs will share document-scoped
-    // native selection groups. However, it simplifies implementation and
-    // testing to use one in all cases. In particular, it means we correctly
-    // manage groups before the first update stamps the native input.
-    //
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
-    this._selectionController = SingleSelectionController.getController(this);
-    this._selectionController.register(this);
-    // With native <input type="radio">, when a checked radio is added to the
-    // root, then it wins. Immediately update to emulate this behavior.
-    this._selectionController.update(this);
-  }
-
-  disconnectedCallback() {
-    // The controller is initialized in connectedCallback, so if we are in
-    // disconnectedCallback then it must be initialized.
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this._selectionController!.unregister(this);
-    this._selectionController = undefined;
-  }
-
   focus() {
     this.focusNative();
   }
@@ -188,11 +153,15 @@ export class RadioBase extends FormElement {
     };
   }
 
-  private handleFocus() {
-    if (this._selectionController !== undefined) {
-      this._selectionController.focus(this);
-      this.handleRippleFocus();
-    }
+  protected handleFocus() {
+    this.handleRippleFocus();
+  }
+
+  /**
+   * Allow child class to handle programmatic check.
+   */
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  protected handleProgrammaticCheck() {
   }
 
   private handleClick() {
@@ -249,9 +218,6 @@ export class RadioBase extends FormElement {
     // We might not have been able to synchronize this from the checked setter
     // earlier, if checked was set before the input was stamped.
     this.formElement.checked = this.checked;
-    if (this._selectionController !== undefined) {
-      this._selectionController.update(this);
-    }
   }
 
   protected handleRippleMouseDown(event: Event) {

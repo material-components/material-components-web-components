@@ -16,10 +16,8 @@ limitations under the License.
 */
 import {customElement} from 'lit-element';
 
-import {RadioBase} from './mwc-radio-base';
+import {RadioBaseWithSingleSelection} from './mwc-radio-base-with-single-selection';
 import {style} from './mwc-radio-css';
-
-export {SingleSelectionController} from './single-selection-controller';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -28,6 +26,6 @@ declare global {
 }
 
 @customElement('mwc-radio')
-export class Radio extends RadioBase {
+export class Radio extends RadioBaseWithSingleSelection {
   static styles = style;
 }
