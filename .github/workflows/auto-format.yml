@@ -1,4 +1,4 @@
-name: auto-format
+![auto-format](https://github.com/thor174/material-components-web-components/workflows/auto-format/badge.svg?branch=master&event=check_run)name: auto-format
 
 on:
   push:
