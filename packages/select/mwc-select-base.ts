@@ -33,7 +33,7 @@ import {Menu} from '@material/mwc-menu';
 import {NotchedOutline} from '@material/mwc-notched-outline';
 import {MDCSelectAdapter} from '@material/select/adapter';
 import MDCSelectFoundation from '@material/select/foundation';
-import {eventOptions, html, property, query} from 'lit-element';
+import {eventOptions, html, internalProperty, property, query} from 'lit-element';
 import {nothing} from 'lit-html';
 import {classMap} from 'lit-html/directives/class-map';
 import {ifDefined} from 'lit-html/directives/if-defined';
@@ -147,9 +147,9 @@ export abstract class SelectBase extends FormElement {
   })
   label = '';
 
-  @property({type: Boolean}) protected outlineOpen = false;
+  @internalProperty() protected outlineOpen = false;
 
-  @property({type: Number}) protected outlineWidth = 0;
+  @internalProperty() protected outlineWidth = 0;
 
   @property({type: String})
   @observer(function(this: SelectBase, value: string) {
@@ -165,11 +165,11 @@ export abstract class SelectBase extends FormElement {
   })
   value = '';
 
-  @property({type: String}) protected selectedText = '';
+  @internalProperty() protected selectedText = '';
 
   @property({type: String}) icon = '';
 
-  @property({type: Boolean}) protected menuOpen = false;
+  @internalProperty() protected menuOpen = false;
 
   @property({type: String}) helper = '';
 
@@ -181,7 +181,7 @@ export abstract class SelectBase extends FormElement {
 
   @property({type: Boolean}) naturalMenuWidth = false;
 
-  @property({type: Boolean}) protected isUiValid = true;
+  @internalProperty() protected isUiValid = true;
 
   // Transiently holds current typeahead prefix from user.
   protected typeaheadState = typeahead.initState();

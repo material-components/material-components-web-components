@@ -188,21 +188,15 @@ export abstract class TextFieldBase extends FormElement {
 
   @property({type: String}) name = '';
 
-  // lit-analyzer requires specific string types, but TS does not compile since
-  // base class is unspecific "string". It also needs non-null coercion (!)
-  // since we don't want to provide a default value, but the base class is not
-  // typed to allow undefined.
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
   @property({type: String}) inputMode!: TextFieldInputMode;
 
   @property({type: Boolean}) readOnly = false;
 
   @property({type: String}) autocapitalize = '';
 
-  @property({type: Boolean}) protected outlineOpen = false;
-  @property({type: Number}) protected outlineWidth = 0;
-  @property({type: Boolean}) protected isUiValid = true;
+  @internalProperty() protected outlineOpen = false;
+  @internalProperty() protected outlineWidth = 0;
+  @internalProperty() protected isUiValid = true;
 
   @internalProperty() protected focused = false;
 

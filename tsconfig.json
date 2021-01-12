@@ -42,7 +42,6 @@
           "no-unknown-property-converter": "error",
           "no-invalid-attribute-name": "error",
           "no-invalid-tag-name": "error",
-
           "no-unknown-attribute": "off",
           "no-unknown-event": "off",
           "no-unknown-slot": "off",

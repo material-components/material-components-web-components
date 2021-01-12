@@ -29,6 +29,9 @@ import {Layoutable, ListItemBase, RequestSelectedDetail} from './mwc-list-item-b
 
 export {ActionDetail, createSetFromIndex, isEventMulti, isIndexSet, MWCListIndex, SelectedDetail} from './mwc-list-foundation';
 
+type ItemsReadyResolver = (value?: (PromiseLike<never[]>|never[]|undefined)) =>
+    void;
+
 function debounceLayout(
     callback: (updateItems: boolean) => void, waitInMS = 50) {
   let timeoutId: number;
@@ -48,7 +51,7 @@ const isListItem = (element: Element): element is ListItemBase => {
 function clearAndCreateItemsReadyPromise(this: ListBase) {
   const oldResolver = this.itemsReadyResolver;
   this.itemsReady = new Promise((res) => {
-    return this.itemsReadyResolver = res;
+    return this.itemsReadyResolver = res as ItemsReadyResolver;
   });
   oldResolver();
 }
@@ -132,11 +135,7 @@ export abstract class ListBase extends BaseElement implements Layoutable {
   noninteractive = false;
 
   debouncedLayout: (updateItems?: boolean) => void | undefined;
-  protected itemsReadyResolver:
-      (value?: (PromiseLike<never[]>|never[]|undefined)) => void =
-          (() => {
-               //
-           }) as(value?: (PromiseLike<unknown[]>|unknown[])) => void;
+  protected itemsReadyResolver: ItemsReadyResolver = () => {};
 
   constructor() {
     super();

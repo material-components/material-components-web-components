@@ -547,7 +547,7 @@ suite('mwc-dialog:', () => {
       container.removeChild(dialog);
       // Wait according to MDC implementation plus a little more.
       await rafPromise();
-      await new Promise((resolve) => {
+      await new Promise<void>((resolve) => {
         setTimeout(() => {
           resolve();
         }, 150 + 10);
