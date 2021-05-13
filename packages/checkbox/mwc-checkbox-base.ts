@@ -119,12 +119,7 @@ export class CheckboxBase extends FormElement {
   /** @soyTemplate */
   protected renderRipple(): TemplateResult|string {
     const selected = this.indeterminate || this.checked;
-    return this.shouldRenderRipple ? html`
-        <mwc-ripple
-          .accent="${selected}"
-          .disabled="${this.disabled}"
-          unbounded>
-        </mwc-ripple>` :
+    return this.shouldRenderRipple ? html`<mwc-ripple unbounded></mwc-ripple>` :
                                      '';
   }
 

@@ -16,11 +16,26 @@ limitations under the License.
 */
 
 @use '@material/checkbox';
+@use '@material/theme/custom-properties';
+@use '@material/theme/theme-color';
+@use 'third_party/javascript/material_web_components/ripple/ripple-theme';
+@use './checkbox-theme';
 
 @mixin core-styles() {
   @include checkbox.without-ripple();
 
   :host {
+    @include checkbox-theme.checked-selector() {
+      @include ripple-theme.theme(
+        (
+          state:
+            custom-properties.create-var(
+              theme-color.get-custom-property(secondary)
+            ),
+        )
+      );
+    }
+
     outline: none;
     display: inline-flex;
     -webkit-tap-highlight-color: transparent;
