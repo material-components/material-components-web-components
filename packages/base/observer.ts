@@ -15,7 +15,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */// tslint:disable:no-any
 
-import {PropertyValues, UpdatingElement} from 'lit-element/lib/updating-element';
+import {PropertyValues, ReactiveElement} from '@lit/reactive-element';
 
 /**
  * Observer function type.
@@ -25,7 +25,7 @@ export interface Observer {
   (value: any, old: any): void;
 }
 
-type UpdatingElementClass = typeof UpdatingElement;
+type UpdatingElementClass = typeof ReactiveElement;
 interface UpdatingElementClassWithObservers extends UpdatingElementClass {
   // tslint:disable-next-line:enforce-name-casing
   _observers: Map<PropertyKey, Observer>;
@@ -44,7 +44,7 @@ export const observer = (observer: Observer) =>
         proto.constructor._observers = new Map<PropertyKey, Observer>();
         const userUpdated = proto.updated;
         proto.updated = function(
-            this: UpdatingElement, changedProperties: PropertyValues) {
+            this: ReactiveElement, changedProperties: PropertyValues) {
           userUpdated.call(this, changedProperties);
           changedProperties.forEach((v, k) => {
             const observers =

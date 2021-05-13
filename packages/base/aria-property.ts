@@ -16,12 +16,12 @@ limitations under the License.
 */// tslint:disable:no-any
 // eslint-disable @typescript-eslint/no-explicit-any
 
-import {PropertyDeclaration, UpdatingElement} from 'lit-element/lib/updating-element';
+import {PropertyDeclaration, ReactiveElement} from '@lit/reactive-element';
 
 /**
  * Expose protected statics on UpdatingElement
  */
-interface UpdatingElementInternals {
+interface ReactiveElementInternals {
   getPropertyDescriptor(name: PropertyKey, key: string): PropertyDescriptor;
   getPropertyOptions(name: PropertyKey): PropertyDeclaration;
 }
@@ -33,7 +33,7 @@ interface UpdatingElementInternals {
 function tsDecorator(
     prototype: {}, name: string, descriptor?: PropertyDescriptor) {
   const constructor =
-      (prototype.constructor as unknown as UpdatingElementInternals);
+      (prototype.constructor as unknown as ReactiveElementInternals);
   if (!descriptor) {
     /**
      * lit-element uses internal properties with two leading underscores to
@@ -58,7 +58,7 @@ function tsDecorator(
   const wrappedDescriptor: PropertyDescriptor = {
     configurable: true,
     enumerable: true,
-    set(this: UpdatingElement, value: unknown) {
+    set(this: ReactiveElement, value: unknown) {
       if (attribute === '') {
         const options = constructor.getPropertyOptions(name);
         // the attribute will be a string at runtime
@@ -72,7 +72,7 @@ function tsDecorator(
   };
 
   if (propDescriptor.get) {
-    wrappedDescriptor.get = function(this: UpdatingElement) {
+    wrappedDescriptor.get = function(this: ReactiveElement) {
       return propDescriptor.get!.call(this);
     };
   }

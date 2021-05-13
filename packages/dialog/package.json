@@ -21,8 +21,8 @@
     "@material/mwc-base": "^0.21.0",
     "@material/mwc-button": "^0.21.0",
     "blocking-elements": "^0.1.0",
-    "lit-element": "^2.5.0",
-    "lit-html": "^1.4.0",
+    "lit-element": "next-major",
+    "lit-html": "next-major",
     "tslib": "^2.0.1",
     "wicg-inert": "^3.0.0"
   },

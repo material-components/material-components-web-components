@@ -20,8 +20,8 @@
     "@material/mwc-ripple": "^0.21.0",
     "@material/mwc-tab-indicator": "^0.21.0",
     "@material/tab": "=12.0.0-canary.a23ecb682.0",
-    "lit-element": "^2.5.0",
-    "lit-html": "^1.4.0",
+    "lit-element": "next-major",
+    "lit-html": "next-major",
     "tslib": "^2.0.1"
   },
   "devDependencies": {

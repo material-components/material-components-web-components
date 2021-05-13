@@ -19,7 +19,7 @@
     "@material/mwc-base": "^0.21.0",
     "@material/mwc-icon-button": "^0.21.0",
     "@material/mwc-ripple": "^0.21.0",
-    "lit-element": "^2.5.0",
+    "lit-element": "next-major",
     "tslib": "^2.0.1"
   },
   "publishConfig": {

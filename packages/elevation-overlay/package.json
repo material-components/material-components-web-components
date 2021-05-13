@@ -17,7 +17,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "lit-element": "^2.5.0",
+    "lit-element": "next-major",
     "tslib": "^2.0.1"
   },
   "devDependencies": {
