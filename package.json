@@ -23,7 +23,7 @@
     "bootstrap": "./scripts/bootstrap.sh",
     "build": "npm run build:styling && npm run build:typescript -- --verbose",
     "build:styling": "./scripts/build-styling.sh",
-    "build:typescript": "tsc --build",
+    "build:typescript": "tsc --build packages/**/tsconfig.json",
     "build:tests": "tsc --build test/tsconfig.json && tsc --build test/tsconfig-node.json",
     "build:scripts": "tsc --project scripts/tsconfig.json",
     "build:demos": "rimraf dist && rollup -c",
