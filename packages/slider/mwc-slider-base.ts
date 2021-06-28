@@ -77,6 +77,8 @@ export class SliderBase extends FormElement {
   })
   markers = false;
 
+  @property() name = '';
+
   @state() protected pinMarkerText = '';
   @state() protected trackMarkerContainerStyles = {};
   @state() protected thumbContainerStyles = {};

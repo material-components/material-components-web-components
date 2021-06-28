@@ -7,7 +7,7 @@
 import {Radio} from '@material/mwc-radio';
 import {html} from 'lit-html';
 
-import {fixture, TestFixture} from '../../../test/src/util/helpers';
+import {fixture, simulateFormDataEvent, TestFixture} from '../../../test/src/util/helpers';
 
 const defaultRadio = html`<mwc-radio></mwc-radio>`;
 
@@ -22,6 +22,14 @@ const repeatedRadio = (values: string[]) => {
       values.map(
           (value) => html`<mwc-radio value=${value} name="a"></mwc-radio>`)}`;
 };
+
+const radioGroupInForm = html`
+    <form>
+      <mwc-radio id="a1" name="a" value="a1"></mwc-radio>
+      <mwc-radio id="a2" name="a" value="a2"></mwc-radio>
+      <mwc-radio id="b1" name="b" value="b1"></mwc-radio>
+    </form>
+    `;
 
 describe('mwc-radio', () => {
   let fixt: TestFixture;
@@ -245,4 +253,50 @@ describe('mwc-radio', () => {
       expect(a2.checked).toBeFalse();
     });
   });
+
+  // IE11 can only append to FormData, not inspect it
+  if (Boolean(FormData.prototype.get)) {
+    describe('form submission', () => {
+      let form: HTMLFormElement;
+      let a1: Radio;
+      let a2: Radio;
+      let b1: Radio;
+
+      beforeEach(async () => {
+        fixt = await fixture(radioGroupInForm);
+        form = fixt.root.querySelector('form')!;
+        [a1, a2, b1] = fixt.root.querySelectorAll('mwc-radio');
+        await Promise.all(
+            [a1.updateComplete, a2.updateComplete, b1.updateComplete]);
+      });
+
+      it('does not submit when unchecked', () => {
+        const formData = simulateFormDataEvent(form);
+        expect(formData.get('a')).toBeNull();
+        expect(formData.get('b')).toBeNull();
+      });
+
+      it('does not submit when disabled', async () => {
+        a1.checked = true;
+        a1.disabled = true;
+        b1.checked = true;
+        b1.disabled = true;
+        await a1.updateComplete;
+        await b1.updateComplete;
+        const formData = simulateFormDataEvent(form);
+        expect(formData.get('a')).toBeNull();
+        expect(formData.get('b')).toBeNull();
+      });
+
+      it('submits when criteria is met', async () => {
+        a1.checked = true;
+        b1.checked = true;
+        await a1.updateComplete;
+        await b1.updateComplete;
+        const formData = simulateFormDataEvent(form);
+        expect(formData.get('a')).toEqual('a1');
+        expect(formData.get('b')).toEqual('b1');
+      });
+    });
+  }
 });

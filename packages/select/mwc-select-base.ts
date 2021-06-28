@@ -154,6 +154,8 @@ export abstract class SelectBase extends FormElement {
   })
   value = '';
 
+  @property() name = '';
+
   @state() protected selectedText = '';
 
   @property({type: String}) icon = '';
@@ -259,8 +261,10 @@ export abstract class SelectBase extends FormElement {
           class="mdc-select ${classMap(classes)}">
         <input
             class="formElement"
-            .value=${this.value}
+            name="${this.name}"
+            .value="${this.value}"
             hidden
+            ?disabled="${this.disabled}"
             ?required=${this.required}>
         <!-- @ts-ignore -->
         <div class="mdc-select__anchor"
@@ -861,6 +865,12 @@ export abstract class SelectBase extends FormElement {
     if (this.mdcFoundation) {
       this.menuOpen = false;
       this.mdcFoundation.handleMenuClosed();
+    }
+  }
+
+  protected formDataCallback(formData: FormData) {
+    if (this.selected !== null) {
+      super.formDataCallback(formData);
     }
   }
 

@@ -36,6 +36,9 @@ export class SwitchBase extends FormElement {
   @property({attribute: 'aria-labelledby'})
   ariaLabelledBy?: string;
 
+  @property() value = 'on';
+  @property() name = '';
+
   @query('.mdc-switch') protected mdcRoot!: HTMLElement;
 
   @query('input') protected formElement!: HTMLInputElement;
@@ -100,6 +103,12 @@ export class SwitchBase extends FormElement {
     }
   }
 
+  protected formDataCallback(formData: FormData) {
+    if (this.checked) {
+      super.formDataCallback(formData);
+    }
+  }
+
   protected render() {
     return html`
       <div class="mdc-switch">
@@ -114,6 +123,8 @@ export class SwitchBase extends FormElement {
               role="switch"
               aria-label="${ifDefined(this.ariaLabel)}"
               aria-labelledby="${ifDefined(this.ariaLabelledBy)}"
+              name="${this.name}"
+              .value="${this.value}"
               @change="${this.changeHandler}"
               @focus="${this.handleRippleFocus}"
               @blur="${this.handleRippleBlur}"

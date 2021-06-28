@@ -21,15 +21,7 @@ export class FormfieldBase extends BaseElement {
 
   @property({type: String})
   @observer(async function(this: FormfieldBase, label: string) {
-    const input = this.input;
-    if (input) {
-      if (input.localName === 'input') {
-        input.setAttribute('aria-label', label);
-      } else if (input instanceof FormElement) {
-        await input.updateComplete;
-        input.setAriaLabel(label);
-      }
-    }
+    this.input?.setAttribute('aria-label', label);
   })
   label = '';
 

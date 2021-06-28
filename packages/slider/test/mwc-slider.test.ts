@@ -8,7 +8,7 @@ import {Slider} from '@material/mwc-slider/mwc-slider';
 import * as hanbi from 'hanbi';
 import {html} from 'lit-html';
 
-import {fixture, ieSafeKeyboardEvent, rafPromise, TestFixture} from '../../../test/src/util/helpers';
+import {fixture, ieSafeKeyboardEvent, rafPromise, simulateFormDataEvent, TestFixture} from '../../../test/src/util/helpers';
 
 const defaultSliderProps = {
   min: 0,
@@ -33,6 +33,12 @@ const slider = (propsInit: Partial<SliderProps> = {}) => {
     </mwc-slider>
   `;
 };
+
+const sliderInForm = html`
+  <form>
+    <mwc-slider name="foo"></mwc-slider>
+  </form>
+`;
 
 const afterRender = async (root: ShadowRoot) => {
   const slider = root.querySelector('mwc-slider')!;
@@ -236,6 +242,41 @@ describe('mwc-slider', () => {
       expect(element.min).toEqual(-3);
       expect(element.max).toEqual(-1);
       expect(element.value).toEqual(-1);
+    });
+  });
+
+  // IE11 can only append to FormData, not inspect it
+  describe('form submission', () => {
+    let form: HTMLFormElement;
+    beforeEach(async () => {
+      fixt = await fixture(sliderInForm);
+      element = fixt.root.querySelector('mwc-slider')!;
+      form = fixt.root.querySelector('form')!;
+      await element.updateComplete;
+    });
+
+    it('does not submit without a name', async () => {
+      element.name = '';
+      await element.updateComplete;
+      const formData = simulateFormDataEvent(form);
+      const keys = Array.from(formData.keys());
+      expect(keys.length).toEqual(0);
+    });
+
+    it('does not submit with disabled', async () => {
+      element.disabled = true;
+      await element.updateComplete;
+      const formData = simulateFormDataEvent(form);
+      expect(formData.get('foo')).toBeNull();
+    });
+
+    it('submits value', async () => {
+      let formData = simulateFormDataEvent(form);
+      expect(formData.get('foo')).withContext('default value').toEqual(0);
+      element.value = 100;
+      await element.updateComplete;
+      formData = simulateFormDataEvent(form);
+      expect(formData.get('foo')).withContext('value set to 100').toEqual(100);
     });
   });
 });
