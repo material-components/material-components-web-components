@@ -5,42 +5,35 @@
  */
 
 @use 'sass:map';
-@use '@material/ripple/ripple';
-@use '@material/ripple/ripple-theme';
-@use '@material/theme/theme';
-@use '@material/theme/theme-color';
-@use '@material/theme/custom-properties';
+@use '@material/ripple/ripple' as mdc-ripple;
+@use '@material/ripple/ripple-theme' as mdc-ripple-theme;
+@use './ripple-theme';
 
 @mixin core-styles() {
-  @include ripple.core-styles();
-  @include ripple.common();
+  @include mdc-ripple.core-styles();
+  @include static-styles();
+  @include ripple-theme.theme-styles(mdc-ripple-theme.$light-theme);
+  @include ripple-theme.theme-styles-deprecated(mdc-ripple-theme.$light-theme);
+}
+
+@mixin static-styles() {
+  @include mdc-ripple.common();
+  @include mdc-ripple.static-styles();
 
   :host {
-    @include ripple.target-common();
+    @include mdc-ripple.target-common();
 
     display: block;
 
     .mdc-ripple-surface {
-      @include ripple.target-common();
+      @include mdc-ripple.target-common();
 
       // TODO(b/151931961): Remove setting `will-change` once resolved.
       will-change: unset;
     }
   }
 
-  .mdc-ripple-surface--primary {
-    @include ripple.states-for-color(primary);
-  }
-
-  .mdc-ripple-surface--accent {
-    @include ripple.states-for-color(secondary);
-  }
-
   .mdc-ripple-surface--disabled {
     opacity: 0;
-  }
-
-  .mdc-ripple-surface--internal-use-state-layer-custom-properties {
-    @include ripple-theme.theme-styles(ripple-theme.$light-theme);
   }
 }

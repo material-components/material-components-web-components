@@ -106,11 +106,18 @@ $light-theme: (
       map.get($text, label-pressed-color)
     );
   }
+  $opacity-map: map.get($text, ripple-opacity);
+  $opacity-map: if($opacity-map, $opacity-map, ());
+
   // TODO(dfreedm): infer ripple opacities from label-color
-  @include ripple-theme.theme-deprecated(
+  @include ripple-theme.theme(
     (
-      state: map.get($text, ripple-color),
-      opacity: map.get($text, ripple-opacity),
+      focus-state-layer-color: map.get($text, ripple-color),
+      focus-state-layer-opacity: map.get($opacity-map, focus),
+      hover-state-layer-color: map.get($text, ripple-color),
+      hover-state-layer-opacity: map.get($opacity-map, hover),
+      pressed-state-layer-color: map.get($text, ripple-color),
+      pressed-state-layer-opacity: map.get($opacity-map, press),
     )
   );
   @include css.declaration(--mdc-shape-small, map.get($text, shape));
@@ -174,11 +181,18 @@ $light-theme: (
     );
   }
 
+  $opacity-map: map.get($outlined, ripple-opacity);
+  $opacity-map: if($opacity-map, $opacity-map, ());
+
   // TODO(dfreedm): infer ripple opacities from label-color
-  @include ripple-theme.theme-deprecated(
+  @include ripple-theme.theme(
     (
-      state: map.get($outlined, ripple-color),
-      opacity: map.get($outlined, ripple-opacity),
+      focus-state-layer-color: map.get($outlined, ripple-color),
+      focus-state-layer-opacity: map.get($opacity-map, focus),
+      hover-state-layer-color: map.get($outlined, ripple-color),
+      hover-state-layer-opacity: map.get($opacity-map, hover),
+      pressed-state-layer-color: map.get($outlined, ripple-color),
+      pressed-state-layer-opacity: map.get($opacity-map, press),
     )
   );
   @include css.declaration(--mdc-shape-small, map.get($outlined, shape));
@@ -256,11 +270,18 @@ $light-theme: (
     );
   }
 
+  $opacity-map: map.get($contained, ripple-opacity);
+  $opacity-map: if($opacity-map, $opacity-map, ());
+
   // TODO(dfreedm): infer ripple opacities from label-color
-  @include ripple-theme.theme-deprecated(
+  @include ripple-theme.theme(
     (
-      state: map.get($contained, ripple-color),
-      opacity: map.get($contained, ripple-opacity),
+      focus-state-layer-color: map.get($contained, ripple-color),
+      focus-state-layer-opacity: map.get($opacity-map, focus),
+      hover-state-layer-color: map.get($contained, ripple-color),
+      hover-state-layer-opacity: map.get($opacity-map, hover),
+      pressed-state-layer-color: map.get($contained, ripple-color),
+      pressed-state-layer-opacity: map.get($opacity-map, press),
     )
   );
   @include css.declaration(--mdc-shape-small, map.get($contained, shape));
