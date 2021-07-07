@@ -92,9 +92,12 @@ For technical details about the Material Icons font, see the
 ### Properties/Attributes
 | Name | Type | Default | Description
 | ---- | ---- | ------- | -----------
+| `aria-haspopup` | `AriaHasPopup`* | `undefined` | Indicates the availability and type of an interactive popup element, such as menu or dialog, that can be triggered by the button.
 | `icon` | `string` | `''` | Icon to display, and `aria-label` value when `label` is not defined.
 | `label` | `string` | `''` | Accessible label for the button, sets `aria-label`.
 | `disabled` | `boolean` | `false` | Disabled buttons cannot be interacted with and have no visual interaction effect.
+
+\* `AriaHasPopup` is equivalent to type `'false'|'true'|'menu'|'listbox'|'tree'|'grid'|'dialog'`
 
 ### Methods
 *None*
