@@ -29,7 +29,7 @@
 
   :host {
     @include checkbox-theme.checked-selector() {
-      @include ripple-theme.theme(
+      @include ripple-theme.theme-deprecated(
         (
           state:
             custom-properties.create-var(

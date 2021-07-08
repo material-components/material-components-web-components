@@ -79,6 +79,8 @@ export class TabBase extends BaseElement {
 
   @state() protected shouldRenderRipple = false;
 
+  @state() protected useStateLayerCustomProperties = false;
+
   @queryAsync('mwc-ripple') ripple!: Promise<Ripple|null>;
 
   protected rippleElement: Ripple|null = null;
@@ -149,10 +151,9 @@ export class TabBase extends BaseElement {
   // TODO(dfreedm): Make this use selected as a param after Polymer/internal#739
   /** @soyCompatible */
   protected renderRipple() {
-    return this.shouldRenderRipple ? html`
-          <mwc-ripple primary></mwc-ripple>
-        ` :
-                                     '';
+    return this.shouldRenderRipple ? html`<mwc-ripple primary
+        .internalUseStateLayerCustomProperties="${
+            this.useStateLayerCustomProperties}"></mwc-ripple>` : '';
   }
 
   protected createAdapter(): MDCTabAdapter {

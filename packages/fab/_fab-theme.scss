@@ -148,7 +148,7 @@ $light-theme: (
 
   $ripple: map.get($theme, ripple);
   @if $ripple {
-    @include ripple-theme.theme($ripple);
+    @include ripple-theme.theme-deprecated($ripple);
   }
 
   $outline-color-focus: map.get($theme, outline-color-focus);

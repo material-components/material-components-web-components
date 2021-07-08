@@ -1,0 +1,22 @@
+/**
+ * @license
+ * Copyright 2018 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+// stylelint-disable selector-class-pattern --
+// Selector '.mdc-*' should only be used in this project.
+
+@use '@material/tab-bar/mixins' as tab-bar;
+
+@mixin static-styles() {
+  :host {
+    display: flex;
+
+    .mdc-tab-bar {
+      @include tab-bar.static-styles();
+
+      flex: 1;
+    }
+  }
+}

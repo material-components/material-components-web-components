@@ -107,7 +107,7 @@ $light-theme: (
     );
   }
   // TODO(dfreedm): infer ripple opacities from label-color
-  @include ripple-theme.theme(
+  @include ripple-theme.theme-deprecated(
     (
       state: map.get($text, ripple-color),
       opacity: map.get($text, ripple-opacity),
@@ -175,7 +175,7 @@ $light-theme: (
   }
 
   // TODO(dfreedm): infer ripple opacities from label-color
-  @include ripple-theme.theme(
+  @include ripple-theme.theme-deprecated(
     (
       state: map.get($outlined, ripple-color),
       opacity: map.get($outlined, ripple-opacity),
@@ -257,7 +257,7 @@ $light-theme: (
   }
 
   // TODO(dfreedm): infer ripple opacities from label-color
-  @include ripple-theme.theme(
+  @include ripple-theme.theme-deprecated(
     (
       state: map.get($contained, ripple-color),
       opacity: map.get($contained, ripple-opacity),

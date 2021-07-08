@@ -41,7 +41,7 @@
       state: theme-color.$on-primary,
       opacity: mdc-ripple-theme.$light-ink-opacities,
     );
-    @include ripple-theme.theme($ripple-config);
+    @include ripple-theme.theme-deprecated($ripple-config);
   }
 
   .trailing-icon,

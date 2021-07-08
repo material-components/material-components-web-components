@@ -11,6 +11,10 @@
 @use '@material/theme/shadow-dom';
 @use '@material/theme/css';
 
+@mixin theme($theme) {
+  @include ripple-theme.theme($theme);
+}
+
 $transparent-theme: (
   state: #000,
   opacity: (
@@ -20,7 +24,7 @@ $transparent-theme: (
   ),
 );
 
-@mixin theme($theme: $transparent-theme) {
+@mixin theme-deprecated($theme: $transparent-theme) {
   @include css.declaration(--mdc-ripple-color, map.get($theme, state));
 
   $opacity-map: map.get($theme, opacity);
