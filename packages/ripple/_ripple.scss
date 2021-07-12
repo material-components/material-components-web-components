@@ -5,42 +5,72 @@
  */
 
 @use 'sass:map';
-@use '@material/ripple/ripple';
-@use '@material/ripple/ripple-theme';
+@use '@material/ripple/ripple' as mdc-ripple;
+@use '@material/ripple/ripple-theme' as mdc-ripple-theme;
 @use '@material/theme/theme';
 @use '@material/theme/theme-color';
+@use '@material/theme/keys';
 @use '@material/theme/custom-properties';
+@use './ripple-theme';
 
 @mixin core-styles() {
-  @include ripple.core-styles();
-  @include ripple.common();
+  @include mdc-ripple.core-styles();
+  @include static-styles();
+  @include ripple-theme.theme-styles(mdc-ripple-theme.$light-theme);
+
+  @include _ripple-legacy-custom-prop-overrides();
+}
+
+@mixin static-styles() {
+  @include mdc-ripple.common();
+  @include mdc-ripple.static-styles();
 
   :host {
-    @include ripple.target-common();
+    @include mdc-ripple.target-common();
 
     display: block;
 
     .mdc-ripple-surface {
-      @include ripple.target-common();
+      @include mdc-ripple.target-common();
 
       // TODO(b/151931961): Remove setting `will-change` once resolved.
       will-change: unset;
     }
   }
 
-  .mdc-ripple-surface--primary {
-    @include ripple.states-for-color(primary);
-  }
-
-  .mdc-ripple-surface--accent {
-    @include ripple.states-for-color(secondary);
-  }
-
   .mdc-ripple-surface--disabled {
     opacity: 0;
   }
+}
 
-  .mdc-ripple-surface--internal-use-state-layer-custom-properties {
-    @include ripple-theme.theme-styles(ripple-theme.$light-theme);
+/**
+ * Provides backwards compatibility for MWC ripple custom properties defined
+ * before theming tokens overhaul
+ */
+@mixin _ripple-legacy-custom-prop-overrides() {
+  .mdc-ripple-surface {
+    /* inject --mdc-ripple-color which is overriden by theme-styles */
+    $hover-theme: keys.create-theme-properties(
+      (
+        hover-state-layer-color:
+          custom-properties.create(
+            --mdc-ripple-color,
+            map.get(mdc-ripple-theme.$light-theme, hover-state-layer-color)
+          ),
+      ),
+      $prefix: mdc-ripple-theme.$custom-property-prefix
+    );
+
+    @include mdc-ripple-theme.states-base-color(
+      map.get($hover-theme, hover-state-layer-color)
+    );
+  }
+
+  .mdc-ripple-surface--primary {
+    @include mdc-ripple.states-for-color(primary);
+  }
+
+  .mdc-ripple-surface--accent {
+    @include mdc-ripple.states-for-color(secondary);
   }
 }

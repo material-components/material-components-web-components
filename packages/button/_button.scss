@@ -37,9 +37,14 @@
 
   :host([raised]),
   :host([unelevated]) {
+    $light-ink-opacities: mdc-ripple-theme.$light-ink-opacities;
     $ripple-config: (
-      state: theme-color.$on-primary,
-      opacity: mdc-ripple-theme.$light-ink-opacities,
+      focus-state-layer-color: theme-color.$on-primary,
+      focus-state-layer-opacity: map.get($light-ink-opacities, focus),
+      hover-state-layer-color: theme-color.$on-primary,
+      hover-state-layer-opacity: map.get($light-ink-opacities, hover),
+      pressed-state-layer-color: theme-color.$on-primary,
+      pressed-state-layer-opacity: map.get($light-ink-opacities, press),
     );
     @include ripple-theme.theme($ripple-config);
   }

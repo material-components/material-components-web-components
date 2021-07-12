@@ -10,44 +10,18 @@
 @use '@material/ripple/ripple-theme';
 @use '@material/theme/shadow-dom';
 @use '@material/theme/css';
+@use '@material/theme/keys';
 
-$transparent-theme: (
-  state: #000,
-  opacity: (
-    hover: 0,
-    focus: 0,
-    press: 0,
-  ),
-);
-
-@mixin theme($theme: $transparent-theme) {
-  @include css.declaration(--mdc-ripple-color, map.get($theme, state));
-
-  $opacity-map: map.get($theme, opacity);
-  @if $opacity-map {
-    @include css.declaration(
-      --mdc-ripple-focus-opacity,
-      map.get($opacity-map, focus)
-    );
-    @include css.declaration(
-      --mdc-ripple-hover-opacity,
-      map.get($opacity-map, hover)
-    );
-    @include css.declaration(
-      --mdc-ripple-press-opacity,
-      map.get($opacity-map, press)
-    );
-  }
+@mixin theme($theme) {
+  @include ripple-theme.theme($theme);
 
   @if shadow-dom.$css-selector-fallback-declarations {
-    .mdc-ripple-surface {
-      @if map.get($theme, state) {
-        @include ripple-theme.states-base-color(map.get($theme, state));
-      }
+    @include theme-styles($theme);
+  }
+}
 
-      @if map.get($theme, opacity) {
-        @include ripple-theme.states-opacities(map.get($theme, opacity));
-      }
-    }
+@mixin theme-styles($theme) {
+  .mdc-ripple-surface {
+    @include ripple-theme.theme-styles($theme);
   }
 }

@@ -33,10 +33,12 @@ $light-theme: (
   extended-icon-padding: fab-variables.$extended-icon-padding,
   extended-label-padding: fab-variables.$extended-label-padding,
   ripple: (
-    state: currentcolor,
-    opacity-hover: 0.04,
-    opacity-focus: 0.12,
-    opacity-press: 0.1,
+    focus-state-layer-color: currentcolor,
+    focus-state-layer-opacity: 0.12,
+    hover-state-layer-color: currentcolor,
+    hover-state-layer-opacity: 0.04,
+    pressed-state-layer-color: currentcolor,
+    pressed-state-layer-opacity: 0.1,
   ),
   elevation-shadow-color: elevation-theme.$baseline-color,
   icon-font-family: 'Material Icons',
@@ -171,20 +173,23 @@ $light-theme: (
 @mixin theme-styles($theme) {
   .mdc-fab {
     @include fab-theme.theme-styles($theme);
+
+    .ripple {
+      $theme: keys.create-theme-properties($theme, $prefix: 'fab');
+
+      @include mdc-ripple-theme.theme(
+        (
+          hover-state-layer-color: map.get($theme, hover-state-layer-color),
+          focus-state-layer-color: map.get($theme, focus-state-layer-color),
+          pressed-state-layer-color: map.get($theme, pressed-state-layer-color),
+          hover-state-layer-opacity: map.get($theme, hover-state-layer-opacity),
+          focus-state-layer-opacity: map.get($theme, focus-state-layer-opacity),
+          pressed-state-layer-opacity:
+            map.get($theme, pressed-state-layer-opacity),
+        )
+      );
+    }
   }
-
-  $theme: keys.create-theme-properties($theme, $prefix: 'fab');
-
-  @include mdc-ripple-theme.theme(
-    (
-      hover-state-layer-color: map.get($theme, hover-state-layer-color),
-      focus-state-layer-color: map.get($theme, focus-state-layer-color),
-      pressed-state-layer-color: map.get($theme, pressed-state-layer-color),
-      hover-state-layer-opacity: map.get($theme, hover-state-layer-opacity),
-      focus-state-layer-opacity: map.get($theme, focus-state-layer-opacity),
-      pressed-state-layer-opacity: map.get($theme, pressed-state-layer-opacity),
-    )
-  );
 }
 
 @mixin theme-declare-custom-properties($theme) {
