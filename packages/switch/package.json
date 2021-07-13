@@ -27,7 +27,8 @@
     "lit-html": "^1.4.1"
   },
   "scripts": {
-    "build:style": "node ../../scripts/sass-to-lit-css/index.js mwc-switch.scss"
+    "build:style": "node ../../scripts/sass-to-lit-css/index.js mwc-switch.scss && npm run build:style-deprecated",
+    "build:style-deprecated": "node ../../scripts/sass-to-lit-css/index.js deprecated/mwc-switch.scss"
   },
   "publishConfig": {
     "access": "public"

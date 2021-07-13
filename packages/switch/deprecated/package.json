@@ -1,0 +1,6 @@
+{
+  "name": "@material/mwc-switch/deprecated",
+  "version": "0.21.0",
+  "main": "mwc-switch.js",
+  "module": "mwc-switch.js"
+}
