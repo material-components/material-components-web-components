@@ -7,7 +7,7 @@ import {Switch} from '@material/mwc-switch';
 import * as hanbi from 'hanbi';
 import {html} from 'lit-html';
 
-import {fixture, TestFixture} from '../../../test/src/util/helpers';
+import {fixture, simulateFormDataEvent, TestFixture} from '../../../test/src/util/helpers';
 
 interface SwitchProps {
   checked: boolean;
@@ -25,6 +25,12 @@ const switchElement = (propsInit: Partial<SwitchProps>) => {
       ?disabled=${propsInit.disabled === true}></mwc-switch>
   `;
 };
+
+const switchInForm = html`
+  <form>
+    <mwc-switch></mwc-switch>
+  </form>
+`;
 
 describe('mwc-switch', () => {
   let fixt: TestFixture;
@@ -143,4 +149,56 @@ describe('mwc-switch', () => {
       expect(input.getAttribute('aria-labelledby')).toEqual('foo');
     });
   });
+
+  // IE11 can only append to FormData, not inspect it
+  if (Boolean(FormData.prototype.get)) {
+    describe('form submission', () => {
+      let form: HTMLFormElement;
+
+      beforeEach(async () => {
+        fixt = await fixture(switchInForm);
+        element = fixt.root.querySelector('mwc-switch')!;
+        form = fixt.root.querySelector('form')!;
+        await element.updateComplete;
+      });
+
+      it('does not submit without a name', () => {
+        const formData = simulateFormDataEvent(form);
+        const keys = Array.from(formData.keys());
+        expect(keys.length).toEqual(0);
+      });
+
+      it('does not submit when disabled', async () => {
+        element.name = 'foo';
+        element.disabled = true;
+        await element.updateComplete;
+        const formData = simulateFormDataEvent(form);
+        expect(formData.get('foo')).toBeNull();
+      });
+
+      it('does not submit when not checked', async () => {
+        element.name = 'foo';
+        await element.updateComplete;
+        const formData = simulateFormDataEvent(form);
+        expect(formData.get('foo')).toBeNull();
+      });
+
+      it('submits "on" by default', async () => {
+        element.name = 'foo';
+        element.checked = true;
+        await element.updateComplete;
+        const formData = simulateFormDataEvent(form);
+        expect(formData.get('foo')).toEqual('on');
+      });
+
+      it('submits given value', async () => {
+        element.name = 'foo';
+        element.value = 'bar';
+        element.checked = true;
+        await element.updateComplete;
+        const formData = simulateFormDataEvent(form);
+        expect(formData.get('foo')).toEqual('bar');
+      });
+    });
+  }
 });

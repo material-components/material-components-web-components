@@ -13,8 +13,18 @@ export {
   CustomEventListener,
   EventType,
   RippleInterface,
-  SpecificEventListener,
+  SpecificEventListener
 };
+
+declare global {
+  interface FormDataEvent extends Event {
+    formData: FormData;
+  }
+
+  interface HTMLElementEventMap {
+    formdata: FormDataEvent;
+  }
+}
 
 /** @soyCompatible */
 export abstract class FormElement extends BaseElement {
@@ -26,23 +36,75 @@ export abstract class FormElement extends BaseElement {
    *
    * Define in your component with the `@query` decorator
    */
-  protected abstract formElement: HTMLElement;
+  protected abstract formElement: HTMLInputElement;
+
+  /**
+   * Name of the component for form submission
+   */
+  abstract name: string;
+  /**
+   * Value of the component for form submission
+   */
+  abstract value: string;
+  abstract disabled: boolean;
 
   /**
    * Implement ripple getter for Ripple integration with mwc-formfield
    */
   readonly ripple?: Promise<RippleInterface|null>;
 
+  /**
+   * Form element that contains this element
+   */
+  protected containingForm: HTMLFormElement|null = null;
+  protected formDataListener = (ev: FormDataEvent) => {
+    this.formDataCallback(ev.formData);
+  };
+
+  protected findFormElement(): HTMLFormElement|null {
+    const root = this.getRootNode() as HTMLElement;
+    const forms = root.querySelectorAll('form');
+    for (const form of Array.from(forms)) {
+      if (form.contains(this)) {
+        return form;
+      }
+    }
+    return null;
+  }
+
+  /**
+   * This callback is called when the containing form element is submitting.
+   * Override this callback to change what information is submitted with the
+   * form
+   */
+  protected formDataCallback(formData: FormData) {
+    if (!this.disabled && this.name) {
+      formData.append(this.name, this.value);
+    }
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    if (!this.shadowRoot) {
+      return;
+    }
+    this.containingForm = this.findFormElement();
+    this.containingForm?.addEventListener('formdata', this.formDataListener);
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this.containingForm !== null) {
+      this.containingForm.removeEventListener(
+          'formdata', this.formDataListener);
+      this.containingForm = null;
+    }
+  }
+
   click() {
     if (this.formElement) {
       this.formElement.focus();
       this.formElement.click();
-    }
-  }
-
-  setAriaLabel(label: string) {
-    if (this.formElement) {
-      this.formElement.setAttribute('aria-label', label);
     }
   }
 

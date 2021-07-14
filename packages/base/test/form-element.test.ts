@@ -5,16 +5,26 @@
  */
 
 import {FormElement} from '@material/mwc-base/form-element';
-import {customElement, LitElement, query} from 'lit-element';
+import {customElement, LitElement, property, query} from 'lit-element';
 import {html} from 'lit-html';
 
-import {fixture, TestFixture} from '../../../test/src/util/helpers';
+import {fixture, simulateFormDataEvent, TestFixture} from '../../../test/src/util/helpers';
 
+interface FormElementInternals {
+  containingForm: HTMLFormElement|null;
+}
+
+interface FormDataEvent extends Event {
+  formData: FormData;
+}
 
 @customElement('test-form-element')
 class TestFormElement extends FormElement {
   @query('#root') protected mdcRoot!: HTMLElement;
-  @query('#input') protected formElement!: HTMLElement;
+  @query('#input') protected formElement!: HTMLInputElement;
+  disabled = false;
+  name = '';
+  value = '';
 
   protected mdcFoundation = undefined;
   protected mdcFoundationClass = undefined;
@@ -34,8 +44,11 @@ class TestFormElement extends FormElement {
 @customElement('custom-click-form-element')
 class CustomClickFormElement extends FormElement {
   @query('#root') protected mdcRoot!: HTMLElement;
-  @query('#indirect') indirectFormElement!: HTMLElement;
-  @query('#direct') protected formElement!: HTMLElement;
+  @query('#indirect') indirectFormElement!: HTMLInputElement;
+  @query('#direct') protected formElement!: HTMLInputElement;
+  disabled = false;
+  name = '';
+  value = '';
 
   protected mdcFoundation = undefined;
   protected mdcFoundationClass = undefined;
@@ -67,6 +80,26 @@ class CustomClickFormElement extends FormElement {
   }
 }
 
+@customElement('form-submission')
+class FormSubmission extends FormElement {
+  @property() name = 'foo';
+  @property() value = 'bar';
+  @property({type: Boolean}) disabled = false;
+  @query('input') protected formElement!: HTMLInputElement;
+  @query('input') protected mdcRoot!: HTMLElement;
+
+  protected mdcFoundation = undefined;
+  protected mdcFoundationClass = undefined;
+  protected createAdapter() {
+    return {};
+  }
+
+  render() {
+    return html`<input value="${this.value}" ?disabled="${
+        this.disabled}" name="${this.name}"></input>`;
+  }
+}
+
 const testFormElement = html`
   <test-form-element></test-form-element>
 `;
@@ -74,6 +107,9 @@ const testFormElement = html`
 const testClickFormElement = html`
   <custom-click-form-element></custom-click-form-element>
 `;
+
+const testFormSubmission =
+    html`<form><form-submission></form-submission></form>`;
 
 describe('form-element:', () => {
   describe('test-form-element', () => {
@@ -187,6 +223,67 @@ describe('form-element:', () => {
       await component.updateComplete;
 
       expect(component.shadowRoot.activeElement).not.toEqual(formElement);
+    });
+  });
+
+  describe('form submission', () => {
+    let fixt: TestFixture;
+    let component: FormSubmission;
+    let form: HTMLFormElement;
+
+    // IE11 can only append to FormData, not inspect it
+    const canInspectFormData = Boolean(FormData.prototype.get);
+
+    beforeEach(async () => {
+      fixt = await fixture(testFormSubmission);
+      component = fixt.root.querySelector('form-submission')!;
+      form = fixt.root.querySelector('form')!;
+
+      await component.updateComplete;
+    });
+
+    afterEach(() => {
+      fixt?.remove();
+    });
+
+    it('finds the form element container', () => {
+      expect((component as unknown as FormElementInternals).containingForm)
+          .toEqual(form);
+    });
+
+    it('resets containingForm on disconnect', () => {
+      component.remove();
+      expect((component as unknown as FormElementInternals).containingForm)
+          .toBeNull();
+    });
+
+    it('reports name and value on "formdata" event', () => {
+      if (!canInspectFormData) {
+        return;
+      }
+      const formData = simulateFormDataEvent(form);
+      expect(formData.get('foo')).toEqual('bar');
+    });
+
+    it('does not report when the component is disabled', async () => {
+      if (!canInspectFormData) {
+        return;
+      }
+      component.disabled = true;
+      await component.updateComplete;
+      const formData = simulateFormDataEvent(form);
+      expect(formData.get('foo')).toBeNull();
+    });
+
+    it('does not report when name is not set', async () => {
+      if (!canInspectFormData) {
+        return;
+      }
+      component.name = '';
+      await component.updateComplete;
+      const formData = simulateFormDataEvent(form);
+      const keys = Array.from(formData.keys());
+      expect(keys.length).toEqual(0);
     });
   });
 });

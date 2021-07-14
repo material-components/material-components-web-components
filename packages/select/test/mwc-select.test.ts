@@ -10,7 +10,7 @@ import {ListItem} from '@material/mwc-list/mwc-list-item';
 import {Select} from '@material/mwc-select';
 import {html} from 'lit-html';
 
-import {fixture, rafPromise, TestFixture} from '../../../test/src/util/helpers';
+import {fixture, rafPromise, simulateFormDataEvent, TestFixture} from '../../../test/src/util/helpers';
 
 interface WithSelectedText {
   selectedText: string;
@@ -71,6 +71,17 @@ const valueInit = html`
     <mwc-list-item value="b">Banana</mwc-list-item>
     <mwc-list-item value="c">Cucumber</mwc-list-item>
   </mwc-select>
+`;
+
+const selectInForm = html`
+  <form>
+    <mwc-select name="foo">
+      <mwc-list-item></mwc-list-item>
+      <mwc-list-item value="a">Apple</mwc-list-item>
+      <mwc-list-item value="b">Banana</mwc-list-item>
+      <mwc-list-item value="c">Cucumber</mwc-list-item>
+    </mwc-select>
+  </form>
 `;
 
 const isUiInvalid = (element: Select) => {
@@ -934,4 +945,64 @@ describe('mwc-select:', () => {
       changeCalls = 0;
     });
   });
+
+  // IE11 can only append to FormData, not inspect it
+  if (Boolean(FormData.prototype.get)) {
+    describe('form submission', () => {
+      let form: HTMLFormElement;
+      let element: Select;
+      let items: ListItem[];
+
+      beforeEach(async () => {
+        fixt = await fixture(selectInForm);
+        form = fixt.root.querySelector('form')!;
+        element = fixt.root.querySelector('mwc-select')!;
+        items = Array.from(fixt.root.querySelectorAll('mwc-list-item'));
+        await Promise.all(
+            [element.updateComplete, ...(items.map((i) => i.updateComplete))]);
+      });
+
+      it('does not submit without a name', async () => {
+        element.name = '';
+        await element.updateComplete;
+        const formData = simulateFormDataEvent(form);
+        const keys = Array.from(formData.keys());
+        expect(keys.length).toEqual(0);
+      });
+
+      it('does not submit when disabled', async () => {
+        element.disabled = true;
+        await element.updateComplete;
+        const formData = simulateFormDataEvent(form);
+        expect(formData.get('foo')).toBeNull();
+      });
+
+      it('does not submit when there are no items', async () => {
+        for (const item of items) {
+          item.remove();
+        }
+        await element.layout();
+        await element.updateComplete;
+        const formData = simulateFormDataEvent(form);
+        expect(formData.get('foo')).toBeNull();
+      });
+
+      it('submits selected element value', async () => {
+        let formData = simulateFormDataEvent(form);
+        expect(formData.get('foo'))
+            .withContext('default item')
+            .toEqual(items[0].value);
+        element.select(1);
+        await element.updateComplete;
+        formData = simulateFormDataEvent(form);
+        expect(formData.get('foo'))
+            .withContext('second item')
+            .toEqual(items[1].value);
+      });
+
+      afterEach(() => {
+        fixt?.remove();
+      });
+    });
+  }
 });

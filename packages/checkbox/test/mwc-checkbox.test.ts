@@ -8,7 +8,7 @@ import {Checkbox} from '@material/mwc-checkbox';
 import * as hanbi from 'hanbi';
 import {html} from 'lit-html';
 
-import {fixture, rafPromise, TestFixture} from '../../../test/src/util/helpers';
+import {fixture, rafPromise, simulateFormDataEvent, TestFixture} from '../../../test/src/util/helpers';
 
 interface CheckboxInternals {
   formElement: HTMLInputElement;
@@ -20,6 +20,7 @@ interface CheckboxProps {
   indeterminate: boolean;
   disabled: boolean;
   value: string;
+  name: string;
   reduceTouchTarget: boolean;
 }
 
@@ -34,6 +35,19 @@ const checkbox = (propsInit: Partial<CheckboxProps>) => {
       value=${propsInit.value ?? ''}
       ?reduceTouchTarget=${propsInit.reduceTouchTarget === true}>
     </mwc-checkbox>
+  `;
+};
+
+const checkboxInForm = (propsInit: Partial<CheckboxProps>) => {
+  return html`
+      <form>
+        <mwc-checkbox
+          ?checked="${propsInit.checked === true}"
+          ?disabled="${propsInit.disabled === true}"
+          name="${propsInit.name ?? ''}"
+          value="${propsInit.value ?? ''}">
+        </mwc-checkbox>
+      </form>
   `;
 };
 
@@ -58,7 +72,7 @@ describe('mwc-checkbox', () => {
       expect(element.checked).toEqual(false);
       expect(element.indeterminate).toEqual(false);
       expect(element.disabled).toEqual(false);
-      expect(element.value).toEqual('');
+      expect(element.value).toEqual('on');
     });
 
     it('element.formElement returns the native checkbox element', async () => {
@@ -173,4 +187,50 @@ describe('mwc-checkbox', () => {
       expect(internals.formElement.value).toEqual('new value 2');
     });
   });
+
+  // IE11 can only append to FormData, not inspect it
+  if (Boolean(FormData.prototype.get)) {
+    describe('form submission', () => {
+      let form: HTMLFormElement;
+
+      it('does not submit if not checked', async () => {
+        fixt = await fixture(checkboxInForm({name: 'foo'}));
+        element = fixt.root.querySelector('mwc-checkbox')!;
+        form = fixt.root.querySelector('form')!;
+        await element.updateComplete;
+        const formData = simulateFormDataEvent(form);
+        expect(formData.get('foo')).toBeNull();
+      });
+
+      it('does not submit if disabled', async () => {
+        fixt = await fixture(
+            checkboxInForm({checked: true, disabled: true, name: 'foo'}));
+        element = fixt.root.querySelector('mwc-checkbox')!;
+        form = fixt.root.querySelector('form')!;
+        await element.updateComplete;
+        const formData = simulateFormDataEvent(form);
+        expect(formData.get('foo')).toBeNull();
+      });
+
+      it('does not submit if name is not provided', async () => {
+        fixt = await fixture(checkboxInForm({checked: true}));
+        element = fixt.root.querySelector('mwc-checkbox')!;
+        form = fixt.root.querySelector('form')!;
+        await element.updateComplete;
+        const formData = simulateFormDataEvent(form);
+        const keys = Array.from(formData.keys());
+        expect(keys.length).toEqual(0);
+      });
+
+      it('submits under correct conditions', async () => {
+        fixt = await fixture(
+            checkboxInForm({name: 'foo', checked: true, value: 'bar'}));
+        element = fixt.root.querySelector('mwc-checkbox')!;
+        form = fixt.root.querySelector('form')!;
+        await element.updateComplete;
+        const formData = simulateFormDataEvent(form);
+        expect(formData.get('foo')).toEqual('bar');
+      });
+    });
+  }
 });

@@ -14,6 +14,9 @@ declare global {
   interface Window {
     tachometerResult: undefined|number;
   }
+  interface FormDataEvent extends Event {
+    formData: FormData;
+  }
 }
 
 @customElement('test-fixture')
@@ -177,13 +180,24 @@ export const waitForEvent = (el: Element, ev: string) => new Promise((res) => {
   }, {once: true});
 });
 
-export const ieSafeKeyboardEvent = (type: string, keycode: number) => {
-  // IE es5 fix
-  const init = {detail: 0, bubbles: true, cancelable: true, composed: true};
-  const ev = new CustomEvent(type, init);
+export const ieSafeKeyboardEvent =
+    (type: string, keycode: number) => {
+      // IE es5 fix
+      const init = {detail: 0, bubbles: true, cancelable: true, composed: true};
+      const ev = new CustomEvent(type, init);
 
-  // esc key
-  (ev as unknown as HasKeyCode).keyCode = keycode;
+      // esc key
+      (ev as unknown as HasKeyCode).keyCode = keycode;
 
-  return ev;
+      return ev;
+    }
+
+export const simulateFormDataEvent = (form: HTMLFormElement): FormData => {
+  const event = new Event('formdata');
+  // new FormData(form) will send a 'formdata' event and coallesce the
+  // additions, but this only works in Chrome and Firefox
+  const formData = new FormData();
+  (event as FormDataEvent).formData = formData;
+  form.dispatchEvent(event);
+  return formData;
 }

@@ -10,7 +10,7 @@ import {TextField} from '@material/mwc-textfield';
 import {cssClasses} from '@material/textfield/constants';
 import {html} from 'lit-html';
 
-import {fixture, rafPromise, TestFixture} from '../../../test/src/util/helpers';
+import {fixture, rafPromise, simulateFormDataEvent, TestFixture} from '../../../test/src/util/helpers';
 
 const basic = (outlined = false) => html`
   <mwc-textfield ?outlined=${outlined}></mwc-textfield>
@@ -57,6 +57,12 @@ const makeOutlined = (isHidden: boolean) => html`
 
 const withLabel = html`
   <mwc-textfield label="a label"></mwc-textfield>
+`;
+
+const textfieldInForm = html`
+  <form>
+    <mwc-textfield name="foo"></mwc-textfield>
+  </form>
 `;
 
 const isUiInvalid = (element: TextField) => {
@@ -620,66 +626,109 @@ describe('mwc-textfield:', () => {
       expect(input.getAttribute('aria-labelledby')).toBe('label');
     });
   });
-});
 
-describe('date type textfield', () => {
-  // IE 8-1 has no support for input[type=date]
-  // Feature detection to skip these unit tests in IE, they will always fail
-  if (window.MSInputMethodContext) {
-    return;
-  }
-
-  // Safari has no support for input[type=date]
-  // User Agent sniff to skip these unit tests in Safari, they will always fail
-  if (navigator.userAgent.indexOf('Safari') !== -1) {
-    return;
-  }
-
-  let fixt: TestFixture;
-  let element: TextField;
-
-  beforeEach(async () => {
-    fixt = await fixture(asDateType);
-    element = fixt.root.querySelector('mwc-textfield')!;
-    await element.updateComplete;
-  });
-
-  afterEach(() => {
-    if (fixt) {
-      fixt.remove();
+  describe('date type textfield', () => {
+    // IE 8-1 has no support for input[type=date]
+    // Feature detection to skip these unit tests in IE, they will always fail
+    if (window.MSInputMethodContext) {
+      return;
     }
+
+    // Safari has no support for input[type=date]
+    // User Agent sniff to skip these unit tests in Safari, they will always
+    // fail
+    if (navigator.userAgent.indexOf('Safari') !== -1) {
+      return;
+    }
+
+    let fixt: TestFixture;
+    let element: TextField;
+
+    beforeEach(async () => {
+      fixt = await fixture(asDateType);
+      element = fixt.root.querySelector('mwc-textfield')!;
+      await element.updateComplete;
+    });
+
+    afterEach(() => {
+      if (fixt) {
+        fixt.remove();
+      }
+    });
+
+    it('will be valid with a date-string inside min-max range', async () => {
+      element.focus();
+      element.value = '2020-10-16';
+      element.blur();
+
+      await element.updateComplete;
+
+      expect(element.reportValidity()).toBeTrue();
+      expect(isUiInvalid(element)).toBeFalse();
+    });
+
+    it('will be invalid with a date-string before min', async () => {
+      element.focus();
+      element.value = '2019-10-16';
+      element.blur();
+
+      await element.updateComplete;
+
+      expect(element.reportValidity()).toBeFalse();
+      expect(isUiInvalid(element)).toBeTrue();
+    });
+
+    it('will be invalid with a date-string after max', async () => {
+      element.focus();
+      element.value = '2021-10-16';
+      element.blur();
+
+      await element.updateComplete;
+
+      expect(element.reportValidity()).toBeFalse();
+      expect(isUiInvalid(element)).toBeTrue();
+    });
   });
 
-  it('will be valid with a date-string inside min-max range', async () => {
-    element.focus();
-    element.value = '2020-10-16';
-    element.blur();
+  // IE11 can only append to FormData, not inspect it
+  if (Boolean(FormData.prototype.get)) {
+    describe('form submission', () => {
+      let form: HTMLFormElement;
+      let element: TextField;
 
-    await element.updateComplete;
+      beforeEach(async () => {
+        fixt = await fixture(textfieldInForm);
+        element = fixt.root.querySelector('mwc-textfield')!;
+        form = fixt.root.querySelector('form')!;
+        await element.updateComplete;
+      });
 
-    expect(element.reportValidity()).toBeTrue();
-    expect(isUiInvalid(element)).toBeFalse();
-  });
+      it('does not submit without a name', async () => {
+        element.name = '';
+        await element.updateComplete;
+        const formData = simulateFormDataEvent(form);
+        const keys = Array.from(formData.keys());
+        expect(keys.length).toEqual(0);
+      });
 
-  it('will be invalid with a date-string before min', async () => {
-    element.focus();
-    element.value = '2019-10-16';
-    element.blur();
+      it('does not submit if disabled', async () => {
+        element.disabled = true;
+        await element.updateComplete;
+        const formData = simulateFormDataEvent(form);
+        expect(formData.get('foo')).toBeNull();
+      });
 
-    await element.updateComplete;
+      it('submits empty string by default', async () => {
+        const formData = simulateFormDataEvent(form);
+        expect(formData.get('foo')).toEqual('');
+      });
 
-    expect(element.reportValidity()).toBeFalse();
-    expect(isUiInvalid(element)).toBeTrue();
-  });
-
-  it('will be invalid with a date-string after max', async () => {
-    element.focus();
-    element.value = '2021-10-16';
-    element.blur();
-
-    await element.updateComplete;
-
-    expect(element.reportValidity()).toBeFalse();
-    expect(isUiInvalid(element)).toBeTrue();
-  });
+      it('submits given value', async () => {
+        element.value = 'bar';
+        await element.updateComplete;
+        const formData = simulateFormDataEvent(form);
+        expect(formData.get('foo')).toEqual('bar');
+      });
+    });
+  }
 });
