@@ -11,18 +11,18 @@
   "module": "mwc-menu.js",
   "license": "Apache-2.0",
   "dependencies": {
-    "@material/menu": "=12.0.0-canary.22d29cbb4.0",
-    "@material/menu-surface": "=12.0.0-canary.22d29cbb4.0",
+    "@material/menu": "=12.0.0-canary.2749604bc.0",
+    "@material/menu-surface": "=12.0.0-canary.2749604bc.0",
     "@material/mwc-base": "^0.21.0",
     "@material/mwc-list": "^0.21.0",
-    "@material/shape": "=12.0.0-canary.22d29cbb4.0",
-    "@material/theme": "=12.0.0-canary.22d29cbb4.0",
+    "@material/shape": "=12.0.0-canary.2749604bc.0",
+    "@material/theme": "=12.0.0-canary.2749604bc.0",
     "lit-element": "^2.5.1",
     "lit-html": "^1.4.1",
     "tslib": "^2.0.1"
   },
   "devDependencies": {
-    "@material/shape": "=12.0.0-canary.22d29cbb4.0"
+    "@material/shape": "=12.0.0-canary.2749604bc.0"
   },
   "scripts": {
     "build:style": "node ../../scripts/sass-to-lit-css/index.js mwc-menu.scss mwc-menu-surface.scss"

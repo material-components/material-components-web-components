@@ -16,7 +16,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@material/drawer": "=12.0.0-canary.22d29cbb4.0",
+    "@material/drawer": "=12.0.0-canary.2749604bc.0",
     "@material/mwc-base": "^0.21.0",
     "blocking-elements": "^0.1.0",
     "lit-element": "^2.5.1",
@@ -28,7 +28,7 @@
     "build:style": "node ../../scripts/sass-to-lit-css/index.js mwc-drawer.scss"
   },
   "devDependencies": {
-    "@material/theme": "=12.0.0-canary.22d29cbb4.0"
+    "@material/theme": "=12.0.0-canary.2749604bc.0"
   },
   "publishConfig": {
     "access": "public"
