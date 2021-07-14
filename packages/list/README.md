@@ -392,6 +392,7 @@ it may be simple to just set `--mdc-ripple-color` to `transparent`.
 | `multi`          | `boolean`      | `false` | When `true`, enables selection of multiple items. This will result in `index` being of type `Set<number>` and selected returning `ListItemBase[]`.
 | `wrapFocus`      | `boolean`      | `false` | When `true`, pressing `up` on the keyboard when focused on the first item will focus the last item and `down` when focused on the last item will focus the first item.
 | `itemRoles`      | `string\|null` | `null`  | Determines what `role` attribute to set on all list items.
+| `innerAriaLabel` | `string\|null` | `null`  | ARIA label of the internal `<ul>` element.
 | `innerRole`      | `string\|null` | `null`  | Role of the internal `<ul>` element.
 | `noninteractive` | `boolean`      | `false` | When `true`, disables focus and pointer events (thus ripples) on the list. Used for display-only lists.
 | `items`          | `ListItemBase[]` (readonly)* | `[]` | All list items that are available for selection. Eligible items have the `[mwc-list-item]` attribute which `ListItemBase` applies automatically.
