@@ -1,0 +1,13 @@
+/**
+ * @license
+ * Copyright 2021 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+@use '@material/tab-indicator/mixins' as tab-indicator;
+
+@mixin static-styles() {
+  :host {
+    @include tab-indicator.static-styles();
+  }
+}

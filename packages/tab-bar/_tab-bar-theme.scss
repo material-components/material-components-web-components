@@ -1,0 +1,32 @@
+/**
+ * @license
+ * Copyright 2018 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+@use 'sass:map';
+@use '@material/theme/theme';
+@use '@material/theme/keys';
+@use '@material/theme/map-ext';
+@use 'third_party/javascript/material_web_components/tab/tab-theme';
+@use 'third_party/javascript/material_web_components/tab_indicator/tab-indicator-theme';
+@use '@material/tab-bar/tab-bar-theme' as mdc-tab-bar-theme;
+
+@mixin theme($theme) {
+  @include mdc-tab-bar-theme.theme($theme);
+}
+
+@mixin theme-styles($theme) {
+  @include theme.validate-keys(mdc-tab-bar-theme.$light-theme, $theme);
+  $theme: keys.create-theme-properties(
+    $theme,
+    mdc-tab-bar-theme.$custom-property-prefix
+  );
+
+  @include tab-theme.theme(
+    map-ext.pick($theme, map.keys(tab-theme.$light-theme)...)
+  );
+  @include tab-indicator-theme.theme(
+    map-ext.pick($theme, map.keys(tab-indicator-theme.$light-theme)...)
+  );
+}

@@ -1,0 +1,21 @@
+/**
+ * @license
+ * Copyright 2021 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+@use '@material/tab-indicator/tab-indicator-theme' as mdc-tab-indicator-theme;
+@use '@material/theme/keys';
+@use '@material/theme/theme';
+
+$custom-property-prefix: mdc-tab-indicator-theme.$custom-property-prefix;
+$light-theme: mdc-tab-indicator-theme.$light-theme;
+
+@mixin theme($theme) {
+  @include mdc-tab-indicator-theme.theme($theme);
+}
+
+@mixin theme-styles($theme) {
+  $theme: keys.create-theme-properties($theme, $custom-property-prefix);
+  @include mdc-tab-indicator-theme.theme-styles($theme);
+}
