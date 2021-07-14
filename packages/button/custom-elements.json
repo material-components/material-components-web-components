@@ -1,0 +1,26 @@
+{
+    "version": 1,
+    "tags": [
+      {
+        "label": "mwc-button",
+        "description": "Buttons allow users to take actions, and make choices, with a single tap",
+        "attributes": [
+            "raised",
+            "unelevated",
+            "outlined",
+            "dense",
+            "disabled",
+            "trailingIcon",
+        ],
+        "properties": [
+            "type",
+            "icon",
+            "label",
+        ],
+        "events": [],
+        "slots": [
+            "default-slot"
+        ]
+      }
+    ]
+  }
