@@ -231,7 +231,9 @@ export abstract class MenuBase extends BaseElement {
       elementContainsClass: (element, className) =>
           element.classList.contains(className),
       closeSurface: () => {
-        this.open = false;
+        if (!this.multi) {
+          this.open = false;
+        }
       },
       getElementIndex: (element) => {
         const listElement = this.listElement;
