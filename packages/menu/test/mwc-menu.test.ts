@@ -708,6 +708,9 @@ describe('mwc-menu-surface', () => {
       element.close();
       await rafPromise();
       await element.updateComplete;
+      await new Promise((resolve) => {
+        setTimeout(resolve, 50);
+      });
       expect(document.activeElement).toEqual(focusedElement);
     });
   });
