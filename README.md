@@ -75,7 +75,7 @@ Import the component's JavaScript module, use the component in your HTML, and co
     <script src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 
     <!-- Your application must load the Roboto and Material Icons fonts. -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Material+Icons&display=block" rel="stylesheet">
   </head>
   <body>
