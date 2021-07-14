@@ -22,4 +22,16 @@ describe('mwc-icon', () => {
   it('initializes as an mwc-icon', () => {
     expect(element).toBeInstanceOf(Icon);
   });
+
+  test('sets icon color', () => {
+    element.style.color = "blue";
+    let icon_color = element.style.color;
+    assert.equal(icon_color, "blue");
+  });
+  
+  test('sets icon size', () => {
+    element.style.fontSize = "200px";
+    let icon_size = element.style.fontSize;
+    assert.equal(icon_size, "200px");
+  });
 });
