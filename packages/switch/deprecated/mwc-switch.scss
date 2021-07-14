@@ -1,0 +1,15 @@
+/**
+ * @license
+ * Copyright 2018 Google LLC
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+@use '@material/switch/deprecated' as switch with ($deprecated-suffix: '');
+
+@include switch.without-ripple();
+
+:host {
+  display: inline-flex;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
