@@ -7,51 +7,75 @@
 // Ignore function name case warnings from states module
 // stylelint-disable function-name-case
 @use 'sass:map';
+@use '@material/ripple/ripple' as mdc-ripple;
 @use '@material/ripple/ripple-theme';
 @use '@material/theme/shadow-dom';
 @use '@material/theme/css';
+@use '@material/theme/keys';
+@use '@material/theme/custom-properties';
 
 @mixin theme($theme) {
   @include ripple-theme.theme($theme);
+
+  @if shadow-dom.$css-selector-fallback-declarations {
+    @include theme-styles($theme);
+  }
 }
 
-$transparent-theme: (
-  state: #000,
-  opacity: (
-    hover: 0,
-    focus: 0,
-    press: 0,
-  ),
-);
+@mixin theme-styles($theme) {
+  .mdc-ripple-surface {
+    @include ripple-theme.theme-styles($theme);
+  }
+}
 
-@mixin theme-deprecated($theme: $transparent-theme) {
-  @include css.declaration(--mdc-ripple-color, map.get($theme, state));
+@mixin theme-styles-deprecated($theme) {
+  .mdc-ripple-surface {
+    /* inject old custom props which are overriden by theme-styles */
+    $custom-props: keys.create-theme-properties(
+      (
+        hover-state-layer-color:
+          custom-properties.create(
+            --mdc-ripple-color,
+            map.get($theme, hover-state-layer-color)
+          ),
+        hover-state-layer-opacity:
+          custom-properties.create(
+            --mdc-ripple-hover-opacity,
+            map.get($theme, hover-state-layer-opacity)
+          ),
+        focus-state-layer-opacity:
+          custom-properties.create(
+            --mdc-ripple-focus-opacity,
+            map.get($theme, focus-state-layer-opacity)
+          ),
+        pressed-state-layer-opacity:
+          custom-properties.create(
+            --mdc-ripple-press-opacity,
+            map.get($theme, pressed-state-layer-opacity)
+          ),
+      ),
+      $prefix: ripple-theme.$custom-property-prefix
+    );
 
-  $opacity-map: map.get($theme, opacity);
-  @if $opacity-map {
-    @include css.declaration(
-      --mdc-ripple-focus-opacity,
-      map.get($opacity-map, focus)
+    @include ripple-theme.states-base-color(
+      map.get($custom-props, hover-state-layer-color)
     );
-    @include css.declaration(
-      --mdc-ripple-hover-opacity,
-      map.get($opacity-map, hover)
+    @include ripple-theme.states-hover-opacity(
+      map.get($custom-props, hover-state-layer-opacity)
     );
-    @include css.declaration(
-      --mdc-ripple-press-opacity,
-      map.get($opacity-map, press)
+    @include ripple-theme.states-focus-opacity(
+      map.get($custom-props, focus-state-layer-opacity)
+    );
+    @include ripple-theme.states-press-opacity(
+      map.get($custom-props, pressed-state-layer-opacity)
     );
   }
 
-  @if shadow-dom.$css-selector-fallback-declarations {
-    .mdc-ripple-surface {
-      @if map.get($theme, state) {
-        @include ripple-theme.states-base-color(map.get($theme, state));
-      }
+  .mdc-ripple-surface--primary {
+    @include mdc-ripple.states-for-color(primary);
+  }
 
-      @if map.get($theme, opacity) {
-        @include ripple-theme.states-opacities(map.get($theme, opacity));
-      }
-    }
+  .mdc-ripple-surface--accent {
+    @include mdc-ripple.states-for-color(secondary);
   }
 }

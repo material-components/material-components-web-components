@@ -31,12 +31,14 @@
 
   :host {
     @include checkbox-theme.checked-selector() {
-      @include ripple-theme.theme-deprecated(
+      $ripple-color: custom-properties.create-var(
+        theme-color.get-custom-property(secondary)
+      );
+      @include ripple-theme.theme(
         (
-          state:
-            custom-properties.create-var(
-              theme-color.get-custom-property(secondary)
-            ),
+          focus-state-layer-color: $ripple-color,
+          hover-state-layer-color: $ripple-color,
+          pressed-state-layer-color: $ripple-color,
         )
       );
     }
