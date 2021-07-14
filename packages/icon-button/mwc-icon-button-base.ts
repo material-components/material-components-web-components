@@ -9,6 +9,7 @@ import {ariaProperty} from '@material/mwc-base/aria-property';
 import {Ripple} from '@material/mwc-ripple/mwc-ripple';
 import {RippleHandlers} from '@material/mwc-ripple/ripple-handlers';
 import {eventOptions, html, LitElement, property, query, queryAsync, state, TemplateResult} from 'lit-element';
+import {ifDefined} from 'lit-html/directives/if-defined';
 
 /** @soyCompatible */
 export class IconButtonBase extends LitElement {
@@ -20,6 +21,11 @@ export class IconButtonBase extends LitElement {
   @ariaProperty
   @property({type: String, attribute: 'aria-label'})
   ariaLabel?: string;
+
+  /** @soyPrefixAttribute */
+  @ariaProperty
+  @property({type: String, attribute: 'aria-haspopup'})
+  ariaHasPopup?: 'false'|'true'|'menu'|'listbox'|'tree'|'grid'|'dialog';
 
   @query('button') buttonElement!: HTMLElement;
 
@@ -63,6 +69,7 @@ export class IconButtonBase extends LitElement {
     return html`<button
         class="mdc-icon-button"
         aria-label="${this.ariaLabel || this.icon}"
+        aria-haspopup="${ifDefined(this.ariaHasPopup)}"
         ?disabled="${this.disabled}"
         @focus="${this.handleRippleFocus}"
         @blur="${this.handleRippleBlur}"

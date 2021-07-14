@@ -36,6 +36,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+- `button`
+  - Add `ariaHasPopup` property
+- `icon-button`
+  - Add `ariaHasPopup` property
+
 ## [v0.21.0] - 2021-04-30
 
 ### Changed

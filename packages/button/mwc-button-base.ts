@@ -6,15 +6,22 @@
 import '@material/mwc-icon/mwc-icon';
 import '@material/mwc-ripple/mwc-ripple';
 
+import {ariaProperty} from '@material/mwc-base/aria-property';
 import {Ripple} from '@material/mwc-ripple/mwc-ripple';
 import {RippleHandlers} from '@material/mwc-ripple/ripple-handlers';
 import {eventOptions, html, LitElement, property, query, queryAsync, state, TemplateResult} from 'lit-element';
 import {classMap} from 'lit-html/directives/class-map';
+import {ifDefined} from 'lit-html/directives/if-defined';
 
 /** @soyCompatible */
 export class ButtonBase extends LitElement {
   static shadowRootOptions:
       ShadowRootInit = {mode: 'open', delegatesFocus: true};
+
+  /** @soyPrefixAttribute */
+  @ariaProperty
+  @property({type: String, attribute: 'aria-haspopup'})
+  ariaHasPopup?: 'false'|'true'|'menu'|'listbox'|'tree'|'grid'|'dialog';
 
   @property({type: Boolean, reflect: true}) raised = false;
 
@@ -99,6 +106,7 @@ export class ButtonBase extends LitElement {
           class="mdc-button ${this.getRenderClasses()}"
           ?disabled="${this.disabled}"
           aria-label="${this.label || this.icon}"
+          aria-haspopup="${ifDefined(this.ariaHasPopup)}"
           @focus="${this.handleRippleFocus}"
           @blur="${this.handleRippleBlur}"
           @mousedown="${this.handleRippleActivate}"

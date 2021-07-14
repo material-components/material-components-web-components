@@ -122,6 +122,7 @@ mwc-button {
 ### Properties/Attributes
 | Name | Type | Default | Description
 | ---- | ---- | ------- | -----------
+| `aria-haspopup` | `AriaHasPopup`* | `undefined` | Indicates the availability and type of an interactive popup element, such as menu or dialog, that can be triggered by the button.
 | `icon` | `string` | `''` | Icon to display, and `aria-label` value when `label` is not defined.
 | `label` | `string` | `''` | Label to display for the button, and `aria-label`.
 | `raised` | `boolean` | `false` | Creates a contained button that is elevated above the surface.
@@ -131,6 +132,8 @@ mwc-button {
 | `disabled` | `boolean` | `false` | Disabled buttons cannot be interacted with and have no visual interaction effect.
 | `trailingIcon` | `boolean` | `false` | When `true`, `icon` will be displayed _after_ `label`.
 | 'expandContent' | `boolean` | `false` | When `true`, the space after the label and before any trailing icon, where default slotted content is rendered, is expanded to fit the available space inside the button.
+
+\* `AriaHasPopup` is equivalent to type `'false'|'true'|'menu'|'listbox'|'tree'|'grid'|'dialog'`
 
 ### Methods
 *None*
