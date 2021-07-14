@@ -28,6 +28,10 @@
     }
   }
 
+  .mdc-ripple-surface--internal-use-state-layer-custom-properties {
+    @include ripple-theme.theme-styles(ripple-theme.$light-theme);
+  }
+
   .mdc-ripple-surface--primary {
     @include ripple.states-for-color(primary);
   }
